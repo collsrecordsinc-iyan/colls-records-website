@@ -1,0 +1,118 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'collsrecords.inc@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // Connection testing endpoint
+    match /test/{testId} {
+      allow get: if true;
+    }
+
+    // Songs
+    match /songs/{songId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(songId);
+    }
+
+    // Videos
+    match /videos/{videoId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(videoId);
+    }
+
+    // Team Members
+    match /team_members/{memberId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(memberId);
+    }
+
+    // Ticker Items
+    match /ticker_items/{tickerId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(tickerId);
+    }
+
+    // Services
+    match /services/{serviceId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(serviceId);
+    }
+
+    // Pricing Packages
+    match /pricing_packages/{packageId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(packageId);
+    }
+
+    // News Posts
+    match /news_posts/{newsId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(newsId);
+    }
+
+    // Site Content
+    match /site_content/{contentId} {
+      allow get, list: if true;
+      allow create, update, delete: if isAdmin() && isValidId(contentId);
+    }
+
+    // Bookings
+    match /bookings/{bookingId} {
+      allow get: if isValidId(bookingId) && (isAdmin() || (isSignedIn() && existing().client_email == request.auth.token.email));
+      allow list: if isAdmin();
+      allow create: if isValidId(bookingId) &&
+        incoming().client_name is string && incoming().client_name.size() > 0 && incoming().client_name.size() <= 150 &&
+        incoming().client_email is string && incoming().client_email.size() > 0 && incoming().client_email.size() <= 150 &&
+        incoming().client_phone is string && incoming().client_phone.size() > 0 && incoming().client_phone.size() <= 50 &&
+        incoming().service_name is string && incoming().service_name.size() <= 150 &&
+        incoming().preferred_date is string;
+      allow update, delete: if isAdmin() && isValidId(bookingId);
+    }
+
+    // Messages
+    match /messages/{messageId} {
+      allow get, list: if isAdmin() && isValidId(messageId);
+      allow create: if isValidId(messageId) &&
+        incoming().name is string && incoming().name.size() > 0 && incoming().name.size() <= 150 &&
+        incoming().email is string && incoming().email.size() > 0 && incoming().email.size() <= 150 &&
+        incoming().subject is string && incoming().subject.size() > 0 && incoming().subject.size() <= 200 &&
+        incoming().message is string && incoming().message.size() > 0 && incoming().message.size() <= 3000;
+      allow update, delete: if isAdmin() && isValidId(messageId);
+    }
+
+    // Activity Logs
+    match /activity_logs/{logId} {
+      allow get, list: if isAdmin() && isValidId(logId);
+      allow create: if isValidId(logId) && (isAdmin() || isSignedIn());
+      allow update, delete: if isAdmin() && isValidId(logId);
+    }
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "entities": {
+    "Song": {
+      "title": "Song",
+      "description": "Released studio audio master tracks",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "artist": { "type": "string", "maxLength": 200 },
+        "featured_artists": { "type": "string", "maxLength": 200 },
+        "producer": { "type": "string", "maxLength": 200 },
+        "cover_url": { "type": "string", "maxLength": 1000 },
+        "audio_url": { "type": "string", "maxLength": 1000 },
+        "youtube_url": { "type": "string", "maxLength": 1000 },
+        "genre": { "type": "string", "maxLength": 100 },
+        "release_date": { "type": "string" },
+        "description": { "type": "string", "maxLength": 2000 },
+        "play_count": { "type": "number" },
+        "duration": { "type": "string", "maxLength": 20 },
+        "is_published": { "type": "boolean" },
+        "created_at": { "type": "string" }
+      },
+      "required": ["title", "artist", "cover_url", "audio_url"]
+    },
+    "Video": {
+      "title": "Video",
+      "description": "Official 4K music videos and documentaries",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 200 },
+        "youtube_url": { "type": "string", "maxLength": 1000 },
+        "video_url": { "type": "string", "maxLength": 1000 },
+        "thumbnail_url": { "type": "string", "maxLength": 1000 },
+        "category": { "type": "string", "maxLength": 50 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "is_featured": { "type": "boolean" },
+        "is_published": { "type": "boolean" }
+      },
+      "required": ["title", "thumbnail_url"]
+    },
+    "TeamMember": {
+      "title": "TeamMember",
+      "description": "Studio executives, producers, and artists",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "full_name": { "type": "string", "maxLength": 150 },
+        "stage_name": { "type": "string", "maxLength": 150 },
+        "role": { "type": "string", "maxLength": 150 },
+        "bio": { "type": "string", "maxLength": 2000 },
+        "photo_url": { "type": "string", "maxLength": 1000 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "whatsapp": { "type": "string", "maxLength": 500 },
+        "display_order": { "type": "number" },
+        "is_active": { "type": "boolean" }
+      },
+      "required": ["full_name", "role", "photo_url"]
+    },
+    "TickerItem": {
+      "title": "TickerItem",
+      "description": "Live lower-third news announcements",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "type": "string", "maxLength": 500 },
+        "swahili_text": { "type": "string", "maxLength": 500 },
+        "link": { "type": "string", "maxLength": 500 },
+        "priority": { "type": "string", "enum": ["normal", "urgent", "promo"] },
+        "is_active": { "type": "boolean" },
+        "display_order": { "type": "number" }
+      },
+      "required": ["text", "is_active"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "Studio recording session reservations",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "client_name": { "type": "string", "maxLength": 150 },
+        "client_email": { "type": "string", "maxLength": 150 },
+        "client_phone": { "type": "string", "maxLength": 50 },
+        "service_name": { "type": "string", "maxLength": 150 },
+        "package_name": { "type": "string", "maxLength": 150 },
+        "preferred_date": { "type": "string" },
+        "preferred_time": { "type": "string" },
+        "notes": { "type": "string", "maxLength": 2000 },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "in_progress", "completed", "cancelled"] },
+        "assigned_to": { "type": "string", "maxLength": 150 },
+        "price_tzs": { "type": "number" },
+        "created_at": { "type": "string" }
+      },
+      "required": ["client_name", "client_email", "client_phone", "service_name", "preferred_date"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Contact inquiries from website visitors",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 150 },
+        "email": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "subject": { "type": "string", "maxLength": 200 },
+        "message": { "type": "string", "maxLength": 3000 },
+        "is_read": { "type": "boolean" },
+        "created_at": { "type": "string" }
+      },
+      "required": ["name", "email", "subject", "message"]
+    }
+  },
+  "firestore": {
+    "/songs/{songId}": {
+      "schema": { "$ref": "#/entities/Song" },
+      "description": "Catalogue of published songs and audio stems"
+    },
+    "/videos/{videoId}": {
+      "schema": { "$ref": "#/entities/Video" },
+      "description": "Video production catalogue"
+    },
+    "/team_members/{memberId}": {
+      "schema": { "$ref": "#/entities/TeamMember" },
+      "description": "Studio personnel and producer roster"
+    },
+    "/ticker_items/{tickerId}": {
+      "schema": { "$ref": "#/entities/TickerItem" },
+      "description": "Broadcast news ticker announcements"
+    },
+    "/bookings/{bookingId}": {
+      "schema": { "$ref": "#/entities/Booking" },
+      "description": "Studio reservation sessions"
+    },
+    "/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Inbound client contact messages"
+    }
+  }
+}

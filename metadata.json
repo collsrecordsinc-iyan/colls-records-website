@@ -1,0 +1,9 @@
+{
+  "name": "Colls Records",
+  "description": "International music label, recording studio and creative multimedia production house based in Tanga, Tanzania.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API",
+    "MAJOR_CAPABILITY_FIRESTORE"
+  ]
+}
